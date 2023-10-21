@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	<title>
+		{{ page_title }}
+	</title>
+{% endblock title %}
+
+<!--Custom CSS -->
+{% block css %}
+	<style>
+        .horizontal-divider {
+            border-top: 2px solid #ccc;
+            margin-top: 20px;
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+	</style>
+{% endblock css %}
+
+{% block content %}
+
+	<body class="g-sidenav-show bg-gray-100">
+	<div class="min-height-300 bg-primary position-absolute w-100"></div>
+
+	<!-- Sidebar Start -->
+	{% include 'sidebar.html' %}
+	<!-- Sidebar End -->
+
+	<!-- Main Content Start -->
+	<main class="main-content position-relative border-radius-lg ">
+
+		<!-- Navbar Start -->
+		{% include 'navbar.html' %}
+		<!-- Navbar End -->
+
+		<div class="container-fluid py-4">
+			<div class="row">
+				<div class="col-12">
+					<div class="card mb-4">
+						<div class="card-header pb-0">
+							<div class="row">
+								<div class="col-6 d-flex align-items-center">
+									{% if clients|length > 0 %}
+										<h6 class="mb-0">Invoice</h6>
+									{% else %}
+										<h3 class="mb-0">Invoice - {{ invoice.number|upper }}</h3>
+									{% endif %}
+								</div>
+								<div class="col-6 text-end">
+									<button class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal"
+									        data-bs-target="#product-modal-form">Add New Product's
+									</button>
+								</div>
+
+								<div class="container">
+									<div class="row">
+										<div class="col-sm"></div>
+										<div class="col-sm">
+											{% if messages %}
+												{% for message in messages %}
+													{% if message.tags == 'error' %}
+														<div class="alert alert-danger" id="productAlert" role="alert"
+														     style="color: white;">
+															{{ message }}
+														</div>
+													{% else %}
+														<div class="alert alert-{{ message.tags }}" role="alert"
+														     id="productAlert" style="color: white;">
+															{{ message }}
+														</div>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</div>
+										<div class="col-sm"></div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="card-body px-0 pt-0 pb-2">
+
+
+							{% if products|length > 0 %}
+								<!-- If Products are present display clients-->
+								<div class="table-responsive p-0 m-lg-4">
+									<table class="table align-items-center mb-0">
+										<thead>
+										<tr>
+											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Title
+											</th>
+											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+												Description
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Quantity
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Price
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Related Invoice
+											</th>
+											<th class="text-secondary opacity-7"></th>
+										</tr>
+										</thead>
+										<tbody>
+
+										<!-- Products Data Start -->
+										{% for product in products %}
+											<tr>
+												<td>
+													<div class="d-flex px-2 py-1">
+														<div>
+															<h6 class="mb-0 text-sm">{{ product.title|truncatechars:50 }}</h6>
+														</div>
+													</div>
+												</td>
+
+												<td>
+													<p class="text-xs font-weight-bold mb-0">{{ product.description|truncatechars:100|linebreaksbr }}</p>
+												</td>
+												<td class="align-middle text-center text-sm">
+													    <span class="badge badge-sm bg-gradient-success"
+													          style="color: white; text-decoration: none;">
+														    {{ product.quantity }}
+													    </span>
+												</td>
+
+												<td class="align-middle text-center">
+													<span class="text-secondary text-xs font-weight-bold">{{ product.currency }} {{ product.price }}</span>
+												</td>
+												<td class="align-middle text-center">
+													<span class="text-secondary text-xs font-weight-bold">{{ product.invoice.number }} </span>
+												</td>
+												<td class="align-middle">
+													<a href="javascript:;"
+													   class="text-secondary font-weight-bold text-xs"
+													   data-toggle="tooltip" data-original-title="Edit user">
+														Edit
+													</a>
+												</td>
+											</tr>
+										{% endfor %}
+										<!-- Products Data End -->
+										</tbody>
+									</table>
+								</div>
+
+								<!-- Divider -->
+								<hr class="horizontal-divider"/>
+
+								<!-- Additional Form Sections -->
+								<div class="card-header pb-4 pt-4">
+									<div class="row">
+										<div class="col-lg-8 d-flex align-items-center">
+											<h5 class="mb-0">Edit the Invoice Details Below</h5>
+										</div>
+										<div class="col-lg-4 d-flex align-items-center">
+											<h5 class="mb-0">Select Client</h5>
+										</div>
+									</div>
+								</div>
+
+								<div class="container-fluid">
+									<div class="row ">
+										<div class="col-lg-8">
+											<!-- Invoice Details Form -->
+											<form method="post" enctype="multipart/form-data" action="#">
+												{% csrf_token %}
+												<input type="hidden" name="invoice-submit" value="1">
+												{% crispy inv_form %}
+											</form>
+										</div>
+										<div class="col-lg-4">
+											<!-- Select Client Form -->
+											<div class="row">
+												{% if invoice.client %}
+													<h6 class="card-title">Current Client :
+														<span
+																class="badge badge-sm bg-gradient-success"
+																style="color: white; text-decoration: none;">
+														{{ invoice.client.clientName }}
+													</span>
+													</h6>
+												{% endif %}
+												<form method="post" action="#">
+													{% csrf_token %}
+													<input type="hidden" name="client-submit" value="1">
+													{{ client_form }}
+													<button type="submit" class="btn bg-gradient-primary w-30">Add Client</button>
+												</form>
+											</div>
+											<!-- Buttons Start -->
+											<div class="row mt-4">
+												<a href="">
+													<button class="btn bg-gradient-info text-white w-100"> VIEW CLIENT INVOICE
+													</button>
+												</a>
+												<a href="">
+													<button class="btn bg-gradient-success text-white w-100"> VIEW PDF INVOICE
+													</button>
+												</a>
+												<a href="">
+													<button class="btn bg-gradient-warning text-white w-100"> EMAIL CLIENT
+														INVOICE
+													</button>
+												</a>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<!-- End Additional Form Sections -->
+							{% else %}
+								<div class="row">
+
+									<div class="col-sm-2"></div>
+									<div class="col-sm-8">
+										<img src="{% static 'assets/svg/add-client.svg' %}" alt="Create Invoice"
+										     class="mb-5">
+									</div>
+
+									<div class="col-sm-2"></div>
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal Start -->
+			<div class="col-md-4">
+				<div class="modal fade" id="product-modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form"
+				     aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+						<div class="modal-content">
+							<div class="modal-body p-0">
+								<div class="card card-plain">
+									<div class="card-header pb-0 text-left">
+										<h3 class="font-weight-bolder text-info text-gradient">Add Product</h3>
+									</div>
+									<div class="card-body">
+										<form method="post" enctype="multipart/form-data" action="#">
+											{% csrf_token %}
+											<input type="hidden" name="product-submit" value="1">
+
+											{{ prod_form.title.label_tag }}
+											<div class="input-group mb-3">
+												{{ prod_form.title }}
+											</div>
+
+											{{ prod_form.description.label_tag }}
+											<div class="input-group mb-3">
+												{{ prod_form.description }}
+											</div>
+
+											{{ prod_form.quantity.label_tag }}
+											<div class="input-group mb-3">
+												{{ prod_form.quantity }}
+											</div>
+
+											{{ prod_form.price.label_tag }}
+											<div class="input-group mb-3">
+												{{ prod_form.price }}
+											</div>
+
+											{{ prod_form.currency.label_tag }}
+											<div class="input-group mb-3">
+												{{ prod_form.currency }}
+											</div>
+
+											<div class="text-center">
+												<button type="submit"
+												        class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">
+													Add Product
+												</button>
+											</div>
+										</form>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal End -->
+
+			<!-- Plugin Start -->
+			{% include 'plugin.html' %}
+			<!-- Plugin End -->
+
+			<footer class="footer pt-3  ">
+				<div class="container-fluid">
+					<div class="row align-items-center justify-content-lg-between">
+						<div class="col-lg-6 mb-lg-0 mb-4">
+							<div class="copyright text-center text-sm text-muted text-lg-start">
+								©
+								<script>
+                                    document.write(new Date().getFullYear())
+								</script>
+								,
+								made with <i class="fa fa-heart"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</main>
+
+	</body>
+
+
+
+{% endblock content %}
+
+
+<!-- Scripts Start -->
+{% block scripts %}
+
+	<script type="text/javascript">
+        let alertElement = document.getElementById("productAlert");
+
+        function hideAlert() {
+            alertElement.style.display = "none";
+        }
+
+        setTimeout(hideAlert, 3000);
+
+	</script>
+{% endblock scripts %}
+<!-- Scripts End -->

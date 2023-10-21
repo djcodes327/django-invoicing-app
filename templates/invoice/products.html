@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	<title>
+		{{ page_title }}
+	</title>
+{% endblock title %}
+
+
+{% block content %}
+
+	<body class="g-sidenav-show   bg-gray-100">
+	<div class="min-height-300 bg-primary position-absolute w-100"></div>
+
+	<!-- Sidebar Start -->
+	{% include 'sidebar.html' %}
+	<!-- Sidebar End -->
+
+	<!-- Main Content Start -->
+	<main class="main-content position-relative border-radius-lg ">
+
+		<!-- Navbar Start -->
+		{% include 'navbar.html' %}
+		<!-- Navbar End -->
+
+		<div class="container-fluid py-4">
+			<div class="row">
+				<div class="col-12">
+					<div class="card mb-4">
+						<div class="card-header pb-0">
+							<!-- <h6>Clients</h6> -->
+							<div class="row">
+								<div class="col-6 d-flex align-items-center">
+									{% if clients|length > 0 %}
+										<h6 class="mb-0">Products</h6>
+									{% else %}
+										<h3 class="mb-0">Add First Product</h3>
+									{% endif %}
+								</div>
+								<div class="col-6 text-end">
+									<a class="btn btn-primary btn-sm mb-0" href="{% url 'create-invoice' %}">Add New
+										Product</a>
+								</div>
+
+								<div class="container">
+									<div class="row">
+										<div class="col-sm"></div>
+										<div class="col-sm">
+											{% if messages %}
+												{% for message in messages %}
+													{% if message.tags == 'error' %}
+														<div class="alert alert-danger" id="clientAlert" role="alert"
+														     style="color: white;">
+															{{ message }}
+														</div>
+													{% else %}
+														<div class="alert alert-{{ message.tags }}" role="alert"
+														     id="clientAlert" style="color: white;">
+															{{ message }}
+														</div>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</div>
+										<div class="col-sm"></div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="card-body px-0 pt-0 pb-2">
+
+
+							{% if clients|length > 0 %}
+								<!-- If Clients are present display clients-->
+								<div class="table-responsive p-0">
+									<table class="table align-items-center mb-0">
+										<thead>
+										<tr>
+											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Client Name
+											</th>
+											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+												Phone Number
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Actions
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Province
+											</th>
+											<th class="text-secondary opacity-7"></th>
+										</tr>
+										</thead>
+										<tbody>
+
+										<!-- Client Data Start -->
+										{% for client in clients %}
+											<tr>
+												<td>
+													<div class="d-flex px-2 py-1">
+														<div>
+															<img src="{{ client.clientLogo.url }}"
+															     class="avatar avatar-sm me-3"
+															     alt="user1">
+														</div>
+														<div class="d-flex flex-column justify-content-center">
+															<h6 class="mb-0 text-sm">{{ client.clientName }}</h6>
+															<p class="text-xs text-secondary mb-0">
+																{{ client.emailAddress }}</p>
+														</div>
+													</div>
+												</td>
+
+												<td>
+													<p class="text-xs font-weight-bold mb-0">{{ client.phoneNumber }}</p>
+												</td>
+												<td class="align-middle text-center text-sm">
+													    <span class="badge badge-sm bg-gradient-success">
+													        <a href="mailto:{{ client.emailAddress }}"
+													           style="color: white; text-decoration: none;">Email</a>
+													    </span>
+													<span class="badge badge-sm bg-gradient-faded-primary">
+												        <a href="tel:{{ client.phoneNumber }}"
+												           style="color: white; text-decoration: none;">Call</a>
+												    </span>
+												</td>
+
+												<td class="align-middle text-center">
+													<span class="text-secondary text-xs font-weight-bold">{{ client.province }}</span>
+												</td>
+												<td class="align-middle">
+													<a href="javascript:;"
+													   class="text-secondary font-weight-bold text-xs"
+													   data-toggle="tooltip" data-original-title="Edit user">
+														Edit
+													</a>
+												</td>
+											</tr>
+										{% endfor %}
+										<!-- Client Data End -->
+										</tbody>
+									</table>
+								</div>
+							{% else %}
+								<div class="row">
+
+									<div class="col-sm-2"></div>
+									<div class="col-sm-8">
+										<img src="{% static 'assets/svg/add-product.svg' %}" alt="Add Client"
+										     class="mb-5">
+									</div>
+
+									<div class="col-sm-2"></div>
+								</div>
+							{% endif %}
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Plugin Start -->
+			{% include 'plugin.html' %}
+			<!-- Plugin End -->
+
+			<footer class="footer pt-3  ">
+				<div class="container-fluid">
+					<div class="row align-items-center justify-content-lg-between">
+						<div class="col-lg-6 mb-lg-0 mb-4">
+							<div class="copyright text-center text-sm text-muted text-lg-start">
+								©
+								<script>
+                                    document.write(new Date().getFullYear())
+								</script>
+								,
+								made with <i class="fa fa-heart"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</main>
+
+	</body>
+
+
+
+{% endblock content %}
+
+
+<!-- Scripts Start -->
+{% block scripts %}
+
+	<script type="text/javascript">
+        var alertElement = document.getElementById("clientAlert");
+
+        function hideAlert() {
+            alertElement.style.display = "none";
+        }
+
+        setTimeout(hideAlert, 3000);
+
+	</script>
+{% endblock scripts %}
+<!-- Scripts End -->

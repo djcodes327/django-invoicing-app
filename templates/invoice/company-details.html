@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	<title>
+		{{ page_title }}
+	</title>
+{% endblock title %}
+
+{% block content %}
+
+	<body class="g-sidenav-show bg-gray-100">
+	<div class="position-absolute w-100 min-height-300 top-0"
+	     style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg'); background-position-y: 50%;">
+		<span class="mask bg-primary opacity-6"></span>
+	</div>
+
+	<!-- Sidebar Start -->
+	{% include 'sidebar.html' %}
+	<!-- Sidebar End -->
+
+	<main class="main-content position-relative max-height-vh-100 h-100">
+
+		<!-- Navbar Start -->
+		{% include 'navbar.html' %}
+		<!-- Navbar End -->
+
+		<div class="card shadow-lg mx-4 card-profile-bottom">
+			<div class="card-body p-3">
+				<div class="row gx-4">
+					<div class="col-auto">
+						<div class="avatar avatar-xl position-relative">
+							<img src="{{ company.clientLogo.url }}" alt="profile_image"
+							     class="w-100 border-radius-lg shadow-sm">
+						</div>
+					</div>
+					<div class="col-auto my-auto">
+						<div class="h-100">
+							<h5 class="mb-1">
+								{{ company.clientName }}
+							</h5>
+							<p class="mb-0 font-weight-bold text-sm">
+								{{ company.emailAddress }}
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid py-4">
+			<div class="row">
+				<div class="col-md-12">
+					<form method="POST" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="card">
+							<div class="card-header pb-0">
+								<div class="d-flex align-items-center">
+									<p class="mb-0">Edit Details</p>
+									<button class="btn btn-primary btn-sm ms-auto" type="submit">Update</button>
+								</div>
+							</div>
+							<div class="card-body">
+								<p class="text-uppercase text-sm">Company Information</p>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_clientName" class="form-control-label">Client Name</label>
+											{{ company_form.clientName }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_clientLogo" class="form-control-label">Client Logo</label>
+											{{ company_form.clientLogo }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_addressLine1" class="form-control-label">Address Line
+												1</label>
+											{{ company_form.addressLine1 }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_addressLine2" class="form-control-label">Address Line
+												2</label>
+											{{ company_form.addressLine2 }}
+										</div>
+									</div>
+								</div>
+								<hr class="horizontal dark">
+
+								<p class="text-uppercase text-sm">Address Details</p>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_province" class="form-control-label">Province</label>
+											{{ company_form.province }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_city" class="form-control-label">City</label>
+											{{ company_form.city }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_postalCode" class="form-control-label">Postal Code</label>
+											{{ company_form.postalCode }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_country" class="form-control-label">Country</label>
+											{{ company_form.country }}
+										</div>
+									</div>
+								</div>
+								<hr class="horizontal dark">
+
+								<p class="text-uppercase text-sm">Contact Information</p>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_phoneNumber" class="form-control-label">Phone Number</label>
+											{{ company_form.phoneNumber }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_emailAddress" class="form-control-label">Email
+												Address</label>
+											{{ company_form.emailAddress }}
+										</div>
+									</div>
+								</div>
+								<hr class="horizontal dark">
+								<p class="text-uppercase text-sm">About Company</p>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_taxNumber" class="form-control-label">Tax Number</label>
+											{{ company_form.taxNumber }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_paymentTerms" class="form-control-label">Payment
+												Terms</label>
+											{{ company_form.paymentTerms }}
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="id_notes" class="form-control-label">Notes</label>
+											{{ company_form.notes }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_creditLimit" class="form-control-label">Credit Limit</label>
+											{{ company_form.creditLimit }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="id_website" class="form-control-label">Website</label>
+											{{ company_form.website }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Plugin Start -->
+	{% include 'plugin.html' %}
+	<!-- Plugin End -->
+
+	<footer class="footer pt-3  ">
+		<div class="container-fluid">
+			<div class="row align-items-center justify-content-lg-between">
+				<div class="col-lg-6 mb-lg-0 mb-4">
+					<div class="copyright text-center text-sm text-muted text-lg-start">
+						©
+						<script>
+                            document.write(new Date().getFullYear())
+						</script>
+						,
+						made with <i class="fa fa-heart"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	</body>
+
+{% endblock content %}
+
