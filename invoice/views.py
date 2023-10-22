@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.models import User, auth
 from .models import Client, Invoice, Product, UserSettings
 from .forms import UserLoginForm, ClientForm, InvoiceForm, ProductForm, ClientSelectForm, CompanySettingsForm
@@ -237,6 +237,9 @@ class CreateBuildInvoiceView(View):
 
 
 class ProfileView(LoginRequiredMixin, View):
+    """
+    User Profile View.
+    """
     template_name = 'invoice/profile.html'
 
     def get(self, request):
@@ -267,11 +270,13 @@ class ProfileView(LoginRequiredMixin, View):
 
 
 class CompanyProfileView(LoginRequiredMixin, View):
+    """
+    Company Profile View.
+    """
     template_name = 'invoice/company-details.html'
 
     def get(self, request):
         user = self.request.user
-        company = UserSettings.objects.get(user=user) or None
         # Check if a UserSettings instance exists for the user
         try:
             user_settings = UserSettings.objects.get(user=user)
@@ -285,14 +290,13 @@ class CompanyProfileView(LoginRequiredMixin, View):
         context = {
             "page_title": "Company Profile",
             "user": user,
-            "company": company,
+            "company": user_settings,
             "company_form": company_form,
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
         user = self.request.user
-        company = UserSettings.objects.get(user=user) or None
         try:
             user_settings = UserSettings.objects.get(user=user)
         except UserSettings.DoesNotExist:
@@ -308,7 +312,46 @@ class CompanyProfileView(LoginRequiredMixin, View):
         context = {
             "page_title": "Profile",
             "user": user,
-            "company": company,
+            "company": user_settings,
             "company_form": company_form,
         }
         return render(request, self.template_name, context)
+
+
+class PDFInvoiceView(DetailView):
+    model = Invoice
+    template_name = 'invoice/invoice-templates.html'
+    context_object_name = 'invoice'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Fetch all the products related to this invoice
+        products = Product.objects.filter(invoice=self.object)
+
+        # Get Client Settings (adjust the filter criteria as needed)
+        user_company_details = UserSettings.objects.filter(user=self.request.user)
+
+        # Calculate the Invoice Total
+        invoice_currency = ''
+        invoice_total = 0.0
+
+        if products:
+            for product in products:
+                total_price = float(product.quantity) * float(product.price)
+                invoice_total += total_price
+                invoice_currency = product.currency
+
+        context['products'] = products
+        context['company_settings'] = user_company_details
+        context['invoiceTotal'] = "{:.2f}".format(invoice_total)
+        context['invoiceCurrency'] = invoice_currency
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object:
+            messages.error(request, 'Something went wrong')
+            return redirect('invoices')
+        return super().get(request, *args, **kwargs)
