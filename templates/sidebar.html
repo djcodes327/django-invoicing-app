@@ -24,7 +24,8 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="../pages/tables.html">
+				<a class="nav-link"
+				   href="../pages/tables.html">
 					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
 						<i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
 					</div>
@@ -40,7 +41,8 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="{% url 'clients' %}">
+				<a class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}"
+				   href="{% url 'clients' %}">
 					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
 						<i class="ni ni-circle-08 text-danger text-sm opacity-10"></i>
 					</div>
@@ -48,7 +50,8 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="{% url 'invoices' %}">
+				<a class="nav-link {% if request.resolver_match.url_name == 'invoices' %}active{% endif %}"
+				   href="{% url 'invoices' %}">
 					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
 						<i class="fas fa-file-invoice-dollar text-danger text-sm opacity-10"></i>
 					</div>
@@ -56,7 +59,8 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="{% url 'products' %}">
+				<a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
+				   href="{% url 'products' %}">
 					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
 						<i class="fa fa-cube text-danger text-sm opacity-10"></i>
 					</div>
@@ -67,11 +71,21 @@
 				<h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="../pages/profile.html">
+				<a class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}"
+				   href="{% url 'profile' %}">
 					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
 						<i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
 					</div>
 					<span class="nav-link-text ms-1">Profile</span>
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link {% if request.resolver_match.url_name == 'company-details' %}active{% endif %}"
+				   href="{% url 'company-details' %}">
+					<div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+						<i class="fas fa-building text-dark text-sm opacity-10"></i>
+					</div>
+					<span class="nav-link-text ms-1">Company</span>
 				</a>
 			</li>
 		</ul>
