@@ -241,8 +241,8 @@ class UserSettings(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "User Settings"  # Singular display name
-        verbose_name_plural = "User Settings"  # Plural display name
+        verbose_name = "Company Settings"  # Singular display name
+        verbose_name_plural = "Company Settings"  # Plural display name
 
     def __str__(self):
         return f"{self.clientName} {self.uniqueId}"

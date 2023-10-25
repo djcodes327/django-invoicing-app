@@ -33,17 +33,17 @@
 							<!-- <h6>Clients</h6> -->
 							<div class="row">
 								<div class="col-6 d-flex align-items-center">
-									{% if clients|length > 0 %}
+									{% if invoices|length > 0 %}
 										<h6 class="mb-0">Invoices</h6>
 									{% else %}
 										<h3 class="mb-0">Add First Invoice</h3>
 									{% endif %}
 								</div>
 								<div class="col-6 text-end">
-								<div class="col-6 text-end">
-									<a class="btn btn-primary btn-sm mb-0" href="{% url 'create-invoice' %}">Add New
-										Product</a>
-								</div>
+									<div>
+										<a class="btn btn-primary btn-sm mb-0" href="{% url 'create-invoice' %}">Add New
+											Invoice</a>
+									</div>
 								</div>
 
 								<div class="container">
@@ -75,71 +75,85 @@
 						<div class="card-body px-0 pt-0 pb-2">
 
 
-							{% if clients|length > 0 %}
+							{% if invoices|length > 0 %}
 								<!-- If Clients are present display clients-->
-								<div class="table-responsive p-0">
-									<table class="table align-items-center mb-0">
+								<div class="table-responsive">
+									<table class="table align-items-center mb-0 mt-3 table-striped">
 										<thead>
 										<tr>
 											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-												Client Name
+												Title
 											</th>
 											<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-												Phone Number
+												status
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Payment Terms
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Client
+											</th>
+											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+												Created at
 											</th>
 											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
 												Actions
 											</th>
-											<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-												Province
-											</th>
-											<th class="text-secondary opacity-7"></th>
+											<!--<th class="text-secondary opacity-7"></th> -->
 										</tr>
 										</thead>
 										<tbody>
 
 										<!-- Client Data Start -->
-										{% for client in clients %}
+										{% for invoice in invoices %}
 											<tr>
 												<td>
 													<div class="d-flex px-2 py-1">
-														<div>
-															<img src="{{ client.clientLogo.url }}"
-															     class="avatar avatar-sm me-3"
-															     alt="user1">
-														</div>
 														<div class="d-flex flex-column justify-content-center">
-															<h6 class="mb-0 text-sm">{{ client.clientName }}</h6>
-															<p class="text-xs text-secondary mb-0">
-																{{ client.emailAddress }}</p>
+															<h6 class="mb-0 text-sm">{{ invoice.title }}</h6>
 														</div>
 													</div>
 												</td>
 
 												<td>
-													<p class="text-xs font-weight-bold mb-0">{{ client.phoneNumber }}</p>
-												</td>
-												<td class="align-middle text-center text-sm">
-													    <span class="badge badge-sm bg-gradient-success">
-													        <a href="mailto:{{ client.emailAddress }}"
-													           style="color: white; text-decoration: none;">Email</a>
-													    </span>
-													<span class="badge badge-sm bg-gradient-faded-primary">
-												        <a href="tel:{{ client.phoneNumber }}"
-												           style="color: white; text-decoration: none;">Call</a>
-												    </span>
+													<p class="text-xs font-weight-bold mb-0">{{ invoice.status }}</p>
 												</td>
 
 												<td class="align-middle text-center">
-													<span class="text-secondary text-xs font-weight-bold">{{ client.province }}</span>
+													<span class="text-secondary text-xs font-weight-bold">{{ invoice.paymentTerms }}</span>
 												</td>
-												<td class="align-middle">
+
+												<td class="align-middle text-center">
+													<span class="text-secondary text-xs font-weight-bold">{{ invoice.client.clientName }}</span>
+												</td>
+
+												<td class="align-middle text-center">
+													<span class="text-secondary text-xs font-weight-bold">{{ invoice.created_at|date }}</span>
+												</td>
+
+												<td class="align-middle text-center mt-5">
+													<span class="btn bg-gradient-primary"
+													      style="color: white; text-decoration: none;">
+														<a href="{% url 'create-build-invoice' invoice.slug %}"
+												           style="color: white; text-decoration: none;">View</a>
+												    </span>
+													<span class="btn bg-gradient-info">
+													        <a href="mailto:{{ client.emailAddress }}"
+													           style="color: white; text-decoration: none;">Email</a>
+													</span>
+													<span class="btn bg-gradient-danger">
+												        <a href="tel:{{ client.phoneNumber }}"
+												           style="color: white; text-decoration: none;">Delete</a>
+												    </span>
+												</td>
+
+												<!-- <td class="align-middle">
 													<a href="javascript:;"
 													   class="text-secondary font-weight-bold text-xs"
 													   data-toggle="tooltip" data-original-title="Edit user">
 														Edit
 													</a>
-												</td>
+												</td> -->
 											</tr>
 										{% endfor %}
 										<!-- Client Data End -->

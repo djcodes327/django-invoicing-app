@@ -15,5 +15,5 @@ urlpatterns = [
 
     # PDF and Document Invoice Views
     path('invoices/view-pdf/<slug:slug>', views.PDFInvoiceView.as_view(), name='view-pdf-invoice'),
-
+    path('invoices/view-document/<slug:slug>', views.DocumentInvoiceView.as_view(), name='view-document-invoice'),
 ]

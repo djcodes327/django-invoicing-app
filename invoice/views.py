@@ -1,14 +1,19 @@
+from uuid import uuid4
+
+import pdfkit
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import auth
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, DetailView
-from django.contrib.auth.models import User, auth
-from .models import Client, Invoice, Product, UserSettings
-from .forms import UserLoginForm, ClientForm, InvoiceForm, ProductForm, ClientSelectForm, CompanySettingsForm
-from uuid import uuid4
+
 from customuser.forms import CustomUserForm
+from .forms import UserLoginForm, ClientForm, InvoiceForm, ProductForm, ClientSelectForm, CompanySettingsForm
+from .models import Client, Invoice, Product, UserSettings
 
 
 # Create your views here.
@@ -330,7 +335,47 @@ class PDFInvoiceView(DetailView):
         products = Product.objects.filter(invoice=self.object)
 
         # Get Client Settings (adjust the filter criteria as needed)
-        user_company_details = UserSettings.objects.filter(user=self.request.user)
+        user_company_details = UserSettings.objects.get(user=self.request.user)
+
+        # Calculate the Invoice Total
+        invoice_currency = ''
+        invoice_total = 0.0
+
+        if products:
+            for product in products:
+                total_price = float(product.quantity) * float(product.price)
+                invoice_total += total_price
+                invoice_currency = product.currency
+
+        # context['invoice'] = self.object
+        context['products'] = products
+        context['company_settings'] = user_company_details
+        context['invoiceTotal'] = "{:.2f}".format(invoice_total)
+        context['invoiceCurrency'] = invoice_currency
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object:
+            messages.error(request, 'Something went wrong')
+            return redirect('invoices')
+        return super().get(request, *args, **kwargs)
+
+
+class DocumentInvoiceView(DetailView):
+    model = Invoice
+    template_name = 'invoice/pdf-template.html'
+    context_object_name = 'invoice'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Fetch all the products related to this invoice
+        products = Product.objects.filter(invoice=self.object)
+
+        # Get Client Settings (adjust the filter criteria as needed)
+        user_company_details = UserSettings.objects.get(user=self.request.user)
 
         # Calculate the Invoice Total
         invoice_currency = ''
@@ -355,3 +400,42 @@ class PDFInvoiceView(DetailView):
             messages.error(request, 'Something went wrong')
             return redirect('invoices')
         return super().get(request, *args, **kwargs)
+
+    def render_to_response(self, context):
+        # The name of your PDF file
+        filename = '{}.pdf'.format(self.object.invoiceId)
+
+        # HTML File to be converted to PDF - inside your Django directory
+        template = get_template(self.template_name)
+
+        # Render the HTML
+        html = template.render(context)
+
+        # Options - Important Step!
+        options = {
+            'encoding': 'UTF-8',
+            'javascript-delay': '1000',  # Optional
+            'enable-local-file-access': None,  # To be able to access CSS
+            'page-size': 'A4',
+            'custom-header': [
+                ('Accept-Encoding', 'gzip')
+            ],
+        }
+
+        path_to_wkhtmltopdf = r'D:\Development\PyCharmProjects\htmltopdf\wkhtmltopdf\bin\wkhtmltopdf.exe'
+
+        # Remember the location of wkhtmltopdf
+        config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+
+        # IF you have CSS to add to the template
+        # css1 = os.path.join(settings.CSS_LOCATION, 'assets', 'css', 'bootstrap.min.css')
+        # css2 = os.path.join(settings.CSS_LOCATION, 'assets', 'css', 'dashboard.css')
+
+        # Create the file
+        file_content = pdfkit.from_string(html, False, configuration=config, options=options, verbose=True)
+
+        # Create the HTTP Response
+        response = HttpResponse(file_content, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename = {}'.format(filename)
+
+        return response
