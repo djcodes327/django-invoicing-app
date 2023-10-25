@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.Index.as_view(), name='index'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
     path('clients/', views.ClientsView.as_view(), name='clients'),
     path('invoices/', views.InvoicesView.as_view(), name='invoices'),
@@ -10,12 +11,12 @@ urlpatterns = [
     path('company-details/', views.CompanyProfileView.as_view(), name='company-details'),
 
     # Create Invoice URL Path's
-    path('invoices/create/', views.CreateInvoiceView.as_view(), name='create-invoice'),
-    path('invoices/create-build/<slug:slug>', views.CreateBuildInvoiceView.as_view(), name='create-build-invoice'),
+    path('create/', views.CreateInvoiceView.as_view(), name='create-invoice'),
+    path('create-build/<slug:slug>', views.CreateBuildInvoiceView.as_view(), name='create-build-invoice'),
 
     # PDF and Document Invoice View's
-    path('invoices/view-pdf/<slug:slug>', views.PDFInvoiceView.as_view(), name='view-pdf-invoice'),
-    path('invoices/view-document/<slug:slug>', views.DocumentInvoiceView.as_view(), name='view-document-invoice'),
+    path('view-pdf/<slug:slug>', views.PDFInvoiceView.as_view(), name='view-pdf-invoice'),
+    path('view-document/<slug:slug>', views.DocumentInvoiceView.as_view(), name='view-document-invoice'),
 
     # Delete View's
     path('client/<slug:slug>/delete/', views.ClientDeleteView.as_view(), name='client-delete'),

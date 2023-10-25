@@ -23,12 +23,11 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', invoice_views.Index.as_view(), name='index'),
+    # path('', invoice_views.Index.as_view(), name='index'),
     # Authentication View's
     path('login/', invoice_views.LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
-    # path('logout/', invoice_views.Index.as_view(), name='index'),
-    path('invoice/', include('invoice.urls')),
+    path('', include('invoice.urls'), name='index'),
 ]
 
 if settings.DEBUG:
