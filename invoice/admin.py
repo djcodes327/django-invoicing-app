@@ -67,10 +67,10 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'description', 'quantity', 'price', 'currency', 'created_at', 'updated_at']
+    list_display = ['title', 'short_description', 'quantity', 'price', 'currency', 'created_at', 'updated_at']
     search_fields = ['title', 'description', 'invoice__title']
     list_filter = ['currency']
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'slug', 'productId',)
 
     fieldsets = (
         ('Basic Information', {
@@ -79,11 +79,20 @@ class ProductAdmin(admin.ModelAdmin):
         ('Related Fields', {
             'fields': ('invoice',),
         }),
+        ('Unique Fields', {
+            'fields': ('slug', 'productId',),
+        }),
         ('Time Stamps', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',),
         }),
     )
+
+    def short_description(self, obj):
+        # Limit the description field to 100 characters
+        return (obj.description[:100] + '...') if len(obj.description) > 100 else obj.description
+
+    short_description.short_description = 'Description'
 
 
 admin.site.register(Client, ClientAdmin)
