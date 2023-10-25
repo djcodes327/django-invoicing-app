@@ -13,7 +13,12 @@ urlpatterns = [
     path('invoices/create/', views.CreateInvoiceView.as_view(), name='create-invoice'),
     path('invoices/create-build/<slug:slug>', views.CreateBuildInvoiceView.as_view(), name='create-build-invoice'),
 
-    # PDF and Document Invoice Views
+    # PDF and Document Invoice View's
     path('invoices/view-pdf/<slug:slug>', views.PDFInvoiceView.as_view(), name='view-pdf-invoice'),
     path('invoices/view-document/<slug:slug>', views.DocumentInvoiceView.as_view(), name='view-document-invoice'),
+
+    # Delete View's
+    path('client/<slug:slug>/delete/', views.ClientDeleteView.as_view(), name='client-delete'),
+    path('invoice/<slug:slug>/delete/', views.InvoiceDeleteView.as_view(), name='invoice-delete'),
+    path('product/<slug:slug>/delete/', views.ProductDeleteView.as_view(), name='product-delete'),
 ]
