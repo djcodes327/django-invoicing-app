@@ -1,5 +1,6 @@
 from django.db import models
 from uuid import uuid4
+
 from django.urls import reverse
 
 from django.template.defaultfilters import slugify
@@ -176,6 +177,9 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product-detail', kwargs={'slug': self.slug})
 
+    def calculate_total_price(self):
+        return self.quantity * self.price
+
     def save(self, *args, **kwargs):
         if self.productId is None:
             self.productId = str(uuid4()).split('-')[4]
@@ -257,3 +261,5 @@ class UserSettings(models.Model):
 
         self.slug = slugify('{} {}'.format(self.clientName, self.uniqueId))
         super(UserSettings, self).save(*args, **kwargs)
+
+
