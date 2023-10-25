@@ -4,12 +4,12 @@ import pdfkit
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import auth
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, DeleteView
 
 from customuser.forms import CustomUserForm
 from .forms import UserLoginForm, ClientForm, InvoiceForm, ProductForm, ClientSelectForm, CompanySettingsForm
@@ -145,7 +145,7 @@ class ProductsView(LoginRequiredMixin, View):
         products = Product.objects.filter(user=self.request.user)
         context = {
             "page_title": "Products",
-            "invoices": products,
+            "products": products,
         }
         return render(request, self.template_name, context)
 
@@ -439,3 +439,35 @@ class DocumentInvoiceView(DetailView):
         response['Content-Disposition'] = 'inline; filename = {}'.format(filename)
 
         return response
+
+
+# Delete View's
+
+class ClientDeleteView(View):
+    def get(self, request, slug):
+        try:
+            product = Product.objects.get(slug=slug)
+            product.delete()
+        except Product.DoesNotExist:
+            messages.error(request, 'Client not found')
+        return redirect('clients')
+
+
+class InvoiceDeleteView(View):
+    def get(self, request, slug):
+        try:
+            product = Product.objects.get(slug=slug)
+            product.delete()
+        except Product.DoesNotExist:
+            messages.error(request, 'Invoice not found')
+        return redirect('invoices')
+
+
+class ProductDeleteView(View):
+    def get(self, request, slug):
+        try:
+            product = Product.objects.get(slug=slug)
+            product.delete()
+        except Product.DoesNotExist:
+            messages.error(request, 'Product not found')
+        return redirect('products')
