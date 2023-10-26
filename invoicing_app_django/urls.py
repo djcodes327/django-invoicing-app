@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/', invoice_views.LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
     path('', include('invoice.urls'), name='index'),
+    path('api/', include('api.urls'), name='api'),
 ]
 
 if settings.DEBUG:
